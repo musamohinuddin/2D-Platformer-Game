@@ -8,11 +8,11 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
-  m_EditorHideFlags: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Tileset_Rock_WallRightCeilingCorner0
+  m_Name: Rubble_4
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300184, guid: 6e1db66fc7e57884380659e0a55351f0, type: 3}
+  m_Sprite: {fileID: 21300008, guid: d76850a37a3b5144093c7940ae562b4b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
