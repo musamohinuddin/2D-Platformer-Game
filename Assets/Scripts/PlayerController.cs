@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerController : MonoBehaviour
 {
     public Animator animator;
 	public float speed;
 	public float jump;
+	public int buildIndex;
 
 	private Rigidbody2D rb2d;
 	private BoxCollider2D PlayerCollider;
@@ -47,6 +50,8 @@ public class PlayerController : MonoBehaviour
 
 		MoveCharacter(horizontal, vertical);
 		PlayMovementAnimation(horizontal, vertical);
+
+		
 	}
 
 	//Function to make Player Movement
@@ -57,8 +62,14 @@ public class PlayerController : MonoBehaviour
 		position.x += horizontal * speed * Time.deltaTime;
 		transform.position = position;
 
+		//checking if player felldown
+		if (position.y < -7.5)
+        {
+			SceneManager.LoadScene(buildIndex);
+		}
+
 		//move player vertically
-		if(vertical > 0) 
+		if (vertical > 0) 
 		{
 			rb2d.AddForce(new Vector2(0f, jump), ForceMode2D.Force);
 		}
@@ -122,8 +133,9 @@ public class PlayerController : MonoBehaviour
 
 
 	}
-		//consider when character is jumping .. it will exit collision.
-		void OnCollisionExit2D(Collision2D Collision)
+
+	//consider when character is jumping .. it will exit collision.
+	void OnCollisionExit2D(Collision2D Collision)
 	{
 		if (Collision.gameObject.CompareTag("Ground"))
 		{

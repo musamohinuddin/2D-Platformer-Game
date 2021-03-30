@@ -4,15 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class LevelOverController : MonoBehaviour
+public class GameOverController : MonoBehaviour
 {
-    
+    public Button button;
     public int buildIndex;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        button.onClick.AddListener(OnButtonClick);
     }
 
     // Update is called once per frame
@@ -21,16 +21,10 @@ public class LevelOverController : MonoBehaviour
         
     }
 
-    public void OnTriggerEnter2D(Collider2D collision)
+    public void OnButtonClick()
     {
-        if(collision.gameObject.GetComponent<PlayerController>() != null)
-        {
-            Debug.Log("Level Completed");
-            SceneManager.LoadScene(buildIndex);
-        } 
-    
+        Debug.Log("Button Clicked");
+        //SceneManager.GetSceneByBuildIndex(buildIndex);
+        SceneManager.LoadScene(buildIndex);
     }
-
-    
 }
-
