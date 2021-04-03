@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
@@ -10,11 +8,14 @@ public class PlayerController : MonoBehaviour
 	public float speed;
 	public float jump;
 	public int buildIndex;
+	public ScoreController scoreController;
 
 	private Rigidbody2D rb2d;
 	private BoxCollider2D PlayerCollider;
-	private bool isGrounded = true;
-	
+	bool isGrounded;
+	bool isGround;
+	public Transform GroundCheck;
+	public LayerMask groundlayer;
 
 	private void Awake()
 	{
@@ -22,23 +23,19 @@ public class PlayerController : MonoBehaviour
 		rb2d = gameObject.GetComponent<Rigidbody2D>();		
 		PlayerCollider = gameObject.GetComponent<BoxCollider2D>();
 		
-	}
-	
-	
-	  
-     
-	
-	//private void OnCollisionEnter2D(Collision2D collision)
-	//{
-	//	Debug.Log("Collision: " + collision.gameObject.name);
-	//}
-		
+	}		
 	
 	// Start is called before the first frame update
     void Start()
     {
 		
 	}
+
+	public void PickUpKey()
+    {
+		Debug.Log("Player picked up the Key");
+		scoreController.IncreaseScore(10);
+    }
 
 	// Update is called once per frame
 	void Update()
@@ -47,15 +44,30 @@ public class PlayerController : MonoBehaviour
 		float horizontal = Input.GetAxisRaw("Horizontal");
 		// Get vertical value
 		float vertical = Input.GetAxisRaw("Vertical");
-
 		MoveCharacter(horizontal, vertical);
 		PlayMovementAnimation(horizontal, vertical);
 
-		
+
+		if (vertical > 0)
+        {
+			animator.SetBool("Jump", true);
+			if (isGround)
+            {
+				Jump();
+				
+			}
+			
+        } else
+        {
+			animator.SetBool("Jump", false);
+		}
+
+		isGround = Physics2D.OverlapCircle(GroundCheck.position, 0.2f, groundlayer);
 	}
 
-	//Function to make Player Movement
-	private void MoveCharacter(float horizontal, float vertical) 
+
+    //Function to make Player Movement
+    private void MoveCharacter(float horizontal, float vertical) 
 	{
 		//move player horizontally
 		Vector3 position = transform.position;
@@ -69,10 +81,11 @@ public class PlayerController : MonoBehaviour
 		}
 
 		//move player vertically
-		if (vertical > 0) 
+	/*	if (vertical > 0) 
 		{
-			rb2d.AddForce(new Vector2(0f, jump), ForceMode2D.Force);
-		}
+			//rb2d.AddForce(new Vector2(0f, jump), ForceMode2D.Force);
+		} */
+
 	}
 
 	private void PlayMovementAnimation(float horizontal, float vertical) 
@@ -109,18 +122,42 @@ public class PlayerController : MonoBehaviour
 			PlayerCollider.offset = new Vector2(colliderOffsetx, colliderOffsety * 2);
 
 		}		
-
+		/* Code to commented temp **************************************
 		//Code to make Jump animation		
 		
-			if (vertical > 0 && isGrounded == true)
-			{ 				
-				animator.SetBool("Jump", true);
-			}	
-			else if(isGrounded == false)
-			{
-				animator.SetBool("Jump", false);
-			}
+		if (vertical > 0 )
+        {
+			animator.SetBool("Jump", true);
+			if (isGrounded == true)
+            {
+				
+				rb2d.AddForce(new Vector2(0f, jump), ForceMode2D.Force);
+				
+				Debug.Log("Force Applied");
+			}			
+
+        }		
+		else if(vertical < 0 || isGrounded == false)
+		{
+			animator.SetBool("Jump", false);
+		}
+		*/
 	}
+
+
+	/// ///////////////////////////////////////////////////////////////////////////
+	void Jump()
+    {
+		rb2d.velocity = Vector2.up * jump;
+    }
+
+
+
+
+
+
+
+	/////////////////////////////////////////////////////////////////////////////
 
 	void OnCollisionEnter2D(Collision2D Collision)
 	{
