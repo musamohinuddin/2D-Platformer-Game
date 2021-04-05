@@ -4,38 +4,45 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    public Animator animator;
+	public Animator animator;
 	public float speed;
-	public float jump;
+	public float jumpForce;
 	public int buildIndex;
 	public ScoreController scoreController;
 
 	private Rigidbody2D rb2d;
 	private BoxCollider2D PlayerCollider;
 	bool isGrounded;
-	bool isGround;
 	public Transform GroundCheck;
 	public LayerMask groundlayer;
 
 	private void Awake()
 	{
 		Debug.Log("Player controller awake");
-		rb2d = gameObject.GetComponent<Rigidbody2D>();		
+		rb2d = gameObject.GetComponent<Rigidbody2D>();
 		PlayerCollider = gameObject.GetComponent<BoxCollider2D>();
-		
-	}		
-	
+
+	}
+
 	// Start is called before the first frame update
-    void Start()
-    {
-		
+	void Start()
+	{
+
 	}
 
 	public void PickUpKey()
-    {
+	{
 		Debug.Log("Player picked up the Key");
 		scoreController.IncreaseScore(10);
-    }
+	}
+
+	public void KillPlayer()
+    {
+		Debug.Log("player killed by enemy");
+		//Destroy(gameObject);
+		//Add player Death animation;
+		animator.SetBool("Death", true);
+	}
 
 	// Update is called once per frame
 	void Update()
@@ -44,30 +51,15 @@ public class PlayerController : MonoBehaviour
 		float horizontal = Input.GetAxisRaw("Horizontal");
 		// Get vertical value
 		float vertical = Input.GetAxisRaw("Vertical");
+
 		MoveCharacter(horizontal, vertical);
 		PlayMovementAnimation(horizontal, vertical);
 
-
-		if (vertical > 0)
-        {
-			animator.SetBool("Jump", true);
-			if (isGround)
-            {
-				Jump();
-				
-			}
-			
-        } else
-        {
-			animator.SetBool("Jump", false);
-		}
-
-		isGround = Physics2D.OverlapCircle(GroundCheck.position, 0.2f, groundlayer);
 	}
 
 
-    //Function to make Player Movement
-    private void MoveCharacter(float horizontal, float vertical) 
+	//Function to make Player Movement
+	private void MoveCharacter(float horizontal, float vertical)
 	{
 		//move player horizontally
 		Vector3 position = transform.position;
@@ -76,44 +68,51 @@ public class PlayerController : MonoBehaviour
 
 		//checking if player felldown
 		if (position.y < -7.5)
-        {
+		{
 			SceneManager.LoadScene(buildIndex);
 		}
 
-		//move player vertically
-	/*	if (vertical > 0) 
-		{
-			//rb2d.AddForce(new Vector2(0f, jump), ForceMode2D.Force);
-		} */
-
 	}
 
-	private void PlayMovementAnimation(float horizontal, float vertical) 
+	private void PlayMovementAnimation(float horizontal, float vertical)
+	{
+		RunAnimation(horizontal);
+
+		CrouchAnimation();
+
+		JumpAnimation(vertical);
+	}
+
+	private void RunAnimation(float horizontal)
 	{
 		animator.SetFloat("Speed", Mathf.Abs(horizontal));
 		Vector3 Scale = transform.localScale;
 		if (horizontal < 0)
 		{
 			Scale.x = -1f * Mathf.Abs(Scale.x);
-			
+
 		}
 		else if (horizontal > 0)
 		{
 			Scale.x = Mathf.Abs(Scale.x);
-			
+
 		}
 		transform.localScale = Scale;
+	}
 
+	private void CrouchAnimation()
+	{
 		//Code to make Crouch animation
 		float colliderSizex = PlayerCollider.size.x;
 		float colliderSizey = PlayerCollider.size.y;
 		float colliderOffsetx = PlayerCollider.offset.x;
 		float colliderOffsety = PlayerCollider.offset.y;
+
 		if (Input.GetKeyDown(KeyCode.LeftControl))
 		{
-			animator.SetBool("Crouch", true);			
-			PlayerCollider.size = new Vector2(colliderSizex, colliderSizey/2);
-			PlayerCollider.offset = new Vector2(colliderOffsetx, colliderOffsety/2);			
+			animator.SetBool("Crouch", true);
+			PlayerCollider.size = new Vector2(colliderSizex, colliderSizey / 2);
+			PlayerCollider.offset = new Vector2(colliderOffsetx, colliderOffsety / 2);
 		}
 		else if (Input.GetKeyUp(KeyCode.LeftControl))
 		{
@@ -121,54 +120,73 @@ public class PlayerController : MonoBehaviour
 			PlayerCollider.size = new Vector2(colliderSizex, colliderSizey * 2);
 			PlayerCollider.offset = new Vector2(colliderOffsetx, colliderOffsety * 2);
 
-		}		
-		/* Code to commented temp **************************************
-		//Code to make Jump animation		
-		
-		if (vertical > 0 )
-        {
-			animator.SetBool("Jump", true);
-			if (isGrounded == true)
-            {
-				
-				rb2d.AddForce(new Vector2(0f, jump), ForceMode2D.Force);
-				
-				Debug.Log("Force Applied");
-			}			
-
-        }		
-		else if(vertical < 0 || isGrounded == false)
-		{
-			animator.SetBool("Jump", false);
 		}
-		*/
 	}
 
+	private void JumpAnimation(float vertical)
+	{
+		if (vertical > 0)
+		{
+			isGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.2f, groundlayer);
+			if (isGrounded)
+			{
 
-	/// ///////////////////////////////////////////////////////////////////////////
+				Jump();
+				animator.SetBool("Jump", true);
+				Debug.Log(isGrounded);
+			}
+			else
+            {
+				NoJump();
+				animator.SetBool("Jump", true);
+			}
+		}
+		else
+		{
+			NoJump();
+			animator.SetBool("Jump", false);
+		}
+	}
+
 	void Jump()
+	{
+		float colliderSizex = PlayerCollider.size.x;
+		float colliderSizey = PlayerCollider.size.y;
+		float colliderOffsetx = PlayerCollider.offset.x;
+		float colliderOffsety = PlayerCollider.offset.y;
+
+		//PlayerCollider.size = new Vector2(colliderSizex, colliderSizey / 2);
+		//PlayerCollider.offset = new Vector2(colliderOffsetx, colliderOffsety / 2);
+
+
+		rb2d.velocity = Vector2.up * jumpForce;
+		
+		//Debug.Log("jump done.");
+	}
+
+	void NoJump()
     {
-		rb2d.velocity = Vector2.up * jump;
-    }
+		float colliderSizex = PlayerCollider.size.x;
+		float colliderSizey = PlayerCollider.size.y;
+		float colliderOffsetx = PlayerCollider.offset.x;
+		float colliderOffsety = PlayerCollider.offset.y;
 
+		//PlayerCollider.size = new Vector2(colliderSizex, colliderSizey * 2);
+		//PlayerCollider.offset = new Vector2(colliderOffsetx, colliderOffsety * 2);
 
+		//rb2d.velocity = Vector2.down * (1);
+		
+	}
 
-
-
-
-
-	/////////////////////////////////////////////////////////////////////////////
-
+	/*
 	void OnCollisionEnter2D(Collision2D Collision)
 	{
-		
+
 		if (Collision.gameObject.CompareTag("Ground"))
 		{
 			isGrounded = true;
 			Debug.Log("Collision Entered");
 		}
-
-
 	}
 
 	//consider when character is jumping .. it will exit collision.
@@ -179,8 +197,9 @@ public class PlayerController : MonoBehaviour
 			isGrounded = false;
 			Debug.Log("Collision exit");
 		}
+
 	}
 
-
+	*/
 
 }
