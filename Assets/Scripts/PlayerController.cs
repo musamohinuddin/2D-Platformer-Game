@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 
 public class PlayerController : MonoBehaviour
@@ -15,6 +16,7 @@ public class PlayerController : MonoBehaviour
 	bool isGrounded;
 	public Transform GroundCheck;
 	public LayerMask groundlayer;
+	float delay = 2;
 
 	private void Awake()
 	{
@@ -27,7 +29,7 @@ public class PlayerController : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-
+		
 	}
 
 	public void PickUpKey()
@@ -42,7 +44,16 @@ public class PlayerController : MonoBehaviour
 		//Destroy(gameObject);
 		//Add player Death animation;
 		animator.SetBool("Death", true);
+		StartCoroutine(LoadLevelAfterDelay(delay));
+		//Reload();
 	}
+
+	private IEnumerator LoadLevelAfterDelay(float delay)
+	{
+		yield return new WaitForSeconds(delay);
+		SceneManager.LoadScene(0);
+	}
+
 
 	// Update is called once per frame
 	void Update()
