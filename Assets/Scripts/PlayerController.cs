@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
 	bool isGrounded;
 	public Transform GroundCheck;
 	public LayerMask groundlayer;
-	float delay = 2;
+	float delay = 2;	
 
 	private void Awake()
 	{
@@ -41,11 +41,9 @@ public class PlayerController : MonoBehaviour
 	public void KillPlayer()
     {
 		Debug.Log("player killed by enemy");
-		//Destroy(gameObject);
-		//Add player Death animation;
 		animator.SetBool("Death", true);
 		StartCoroutine(LoadLevelAfterDelay(delay));
-		//Reload();
+		
 	}
 
 	private IEnumerator LoadLevelAfterDelay(float delay)
@@ -81,7 +79,7 @@ public class PlayerController : MonoBehaviour
 		if (position.y < -7.5)
 		{
 			SceneManager.LoadScene(buildIndex);
-		}
+		}		
 
 	}
 
@@ -141,53 +139,26 @@ public class PlayerController : MonoBehaviour
 			isGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.2f, groundlayer);
 			if (isGrounded)
 			{
-
 				Jump();
 				animator.SetBool("Jump", true);
-				Debug.Log(isGrounded);
+				Debug.Log(isGrounded);							
 			}
 			else
-            {
-				NoJump();
+            {				
 				animator.SetBool("Jump", true);
 			}
 		}
 		else
-		{
-			NoJump();
+		{			
 			animator.SetBool("Jump", false);
 		}
 	}
 
 	void Jump()
 	{
-		float colliderSizex = PlayerCollider.size.x;
-		float colliderSizey = PlayerCollider.size.y;
-		float colliderOffsetx = PlayerCollider.offset.x;
-		float colliderOffsety = PlayerCollider.offset.y;
-
-		//PlayerCollider.size = new Vector2(colliderSizex, colliderSizey / 2);
-		//PlayerCollider.offset = new Vector2(colliderOffsetx, colliderOffsety / 2);
-
-
-		rb2d.velocity = Vector2.up * jumpForce;
-		
-		//Debug.Log("jump done.");
+		rb2d.velocity = Vector2.up * jumpForce;		
 	}
-
-	void NoJump()
-    {
-		float colliderSizex = PlayerCollider.size.x;
-		float colliderSizey = PlayerCollider.size.y;
-		float colliderOffsetx = PlayerCollider.offset.x;
-		float colliderOffsety = PlayerCollider.offset.y;
-
-		//PlayerCollider.size = new Vector2(colliderSizex, colliderSizey * 2);
-		//PlayerCollider.offset = new Vector2(colliderOffsetx, colliderOffsety * 2);
-
-		//rb2d.velocity = Vector2.down * (1);
-		
-	}
+	
 
 	/*
 	void OnCollisionEnter2D(Collision2D Collision)
