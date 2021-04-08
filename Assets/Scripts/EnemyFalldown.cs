@@ -31,7 +31,7 @@ public class EnemyFalldown : MonoBehaviour
     private IEnumerator EnemyDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        this.transform.position = new Vector3(21.9f, 3.45f, -0.08f);        
+        this.transform.position = new Vector3(21.77f, 3.64f, -0.08f);        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
