@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.UI;
+
 
 
 public class PlayerController : MonoBehaviour
@@ -16,7 +18,12 @@ public class PlayerController : MonoBehaviour
 	bool isGrounded;
 	public Transform GroundCheck;
 	public LayerMask groundlayer;
-	float delay = 2;	
+	float delay = 1;
+	private int PlayerLife = 3;
+
+
+
+
 
 	private void Awake()
 	{
@@ -30,6 +37,9 @@ public class PlayerController : MonoBehaviour
 	void Start()
 	{
 		
+        
+		
+        
 	}
 
 	public void PickUpKey()
@@ -39,27 +49,50 @@ public class PlayerController : MonoBehaviour
 	}
 
 	public void KillPlayer()
-    {
+    {		
+		PlayerLife -= 1;
 		Debug.Log("player killed by enemy");
-		animator.SetBool("Death", true);
-		StartCoroutine(LoadLevelAfterDelay(delay));
-		
+
+		if (PlayerLife == 2)
+		{			
+
+			GameObject h1 = GameObject.Find("EllenHeart1");
+			h1.GetComponent<Image>().enabled = false;			
+		}
+		else if (PlayerLife == 1)
+		{
+			GameObject h2 = GameObject.Find("EllenHeart2");
+			h2.GetComponent<Image>().enabled = false;
+		} 
+		else if (PlayerLife == 0)
+        {
+			GameObject h3 = GameObject.Find("EllenHeart3");
+			h3.GetComponent<Image>().enabled = false;
+		} 
+		else if (PlayerLife < 0)
+        {
+			animator.SetBool("Death", true);
+			StartCoroutine(LoadLevelAfterDelay(delay));			
+		}
+
 	}
+    
 
 	private IEnumerator LoadLevelAfterDelay(float delay)
 	{
 		yield return new WaitForSeconds(delay);
-		SceneManager.LoadScene(0);
+		SceneManager.LoadScene(3);
 	}
 
+	
 
 	// Update is called once per frame
-	void Update()
+	public void Update()
 	{
 		// Get horizontal value
-		float horizontal = Input.GetAxisRaw("Horizontal");
+		 float horizontal = Input.GetAxisRaw("Horizontal");
 		// Get vertical value
-		float vertical = Input.GetAxisRaw("Vertical");
+		 float vertical = Input.GetAxisRaw("Vertical");
 
 		MoveCharacter(horizontal, vertical);
 		PlayMovementAnimation(horizontal, vertical);
@@ -78,7 +111,7 @@ public class PlayerController : MonoBehaviour
 		//checking if player felldown
 		if (position.y < -7.5)
 		{
-			SceneManager.LoadScene(buildIndex);
+			SceneManager.LoadScene(3);
 		}		
 
 	}
@@ -99,7 +132,7 @@ public class PlayerController : MonoBehaviour
 		if (horizontal < 0)
 		{
 			Scale.x = -1f * Mathf.Abs(Scale.x);
-
+			
 		}
 		else if (horizontal > 0)
 		{
@@ -141,7 +174,7 @@ public class PlayerController : MonoBehaviour
 			{
 				Jump();
 				animator.SetBool("Jump", true);
-				Debug.Log(isGrounded);							
+										
 			}
 			else
             {				
