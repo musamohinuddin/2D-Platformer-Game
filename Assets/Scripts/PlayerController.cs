@@ -1,22 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerController : MonoBehaviour
 {
     public Animator animator;
 	public float speed;
 	public float jump;
+	public int buildIndex;
 
 	private Rigidbody2D rb2d;
 	private BoxCollider2D PlayerCollider;
-
+	private bool isGrounded = true;
 	
 
 	private void Awake()
 	{
 		Debug.Log("Player controller awake");
-		rb2d = gameObject.GetComponent<Rigidbody2D>();
+		rb2d = gameObject.GetComponent<Rigidbody2D>();		
 		PlayerCollider = gameObject.GetComponent<BoxCollider2D>();
 		
 	}
@@ -34,8 +37,8 @@ public class PlayerController : MonoBehaviour
 	// Start is called before the first frame update
     void Start()
     {
-        
-    }
+		
+	}
 
 	// Update is called once per frame
 	void Update()
@@ -47,6 +50,8 @@ public class PlayerController : MonoBehaviour
 
 		MoveCharacter(horizontal, vertical);
 		PlayMovementAnimation(horizontal, vertical);
+
+		
 	}
 
 	//Function to make Player Movement
@@ -57,8 +62,14 @@ public class PlayerController : MonoBehaviour
 		position.x += horizontal * speed * Time.deltaTime;
 		transform.position = position;
 
+		//checking if player felldown
+		if (position.y < -7.5)
+        {
+			SceneManager.LoadScene(buildIndex);
+		}
+
 		//move player vertically
-		if(vertical > 0) 
+		if (vertical > 0) 
 		{
 			rb2d.AddForce(new Vector2(0f, jump), ForceMode2D.Force);
 		}
@@ -97,19 +108,42 @@ public class PlayerController : MonoBehaviour
 			PlayerCollider.size = new Vector2(colliderSizex, colliderSizey * 2);
 			PlayerCollider.offset = new Vector2(colliderOffsetx, colliderOffsety * 2);
 
-		}
+		}		
 
 		//Code to make Jump animation		
-		if (vertical > 0)
+		
+			if (vertical > 0 && isGrounded == true)
+			{ 				
+				animator.SetBool("Jump", true);
+			}	
+			else if(isGrounded == false)
+			{
+				animator.SetBool("Jump", false);
+			}
+	}
+
+	void OnCollisionEnter2D(Collision2D Collision)
+	{
+		
+		if (Collision.gameObject.CompareTag("Ground"))
 		{
-			animator.SetBool("Jump", true);
+			isGrounded = true;
+			Debug.Log("Collision Entered");
 		}
-		else if (vertical < 0)
+
+
+	}
+
+	//consider when character is jumping .. it will exit collision.
+	void OnCollisionExit2D(Collision2D Collision)
+	{
+		if (Collision.gameObject.CompareTag("Ground"))
 		{
-			animator.SetBool("Jump", false);
+			isGrounded = false;
+			Debug.Log("Collision exit");
 		}
 	}
-		
-		
-   
+
+
+
 }
