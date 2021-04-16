@@ -7,12 +7,13 @@ using UnityEngine.UI;
 public class LobbyController : MonoBehaviour
 {
     public Button button;
-    public int buildIndex;
+    //public int buildIndex;
+    public GameObject LevelSelection;
 
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        button.onClick.AddListener(OnButtonClick);
+        button.onClick.AddListener(PlayGame);
 
     }
 
@@ -21,11 +22,10 @@ public class LobbyController : MonoBehaviour
     {
         
     }
+   
 
-    public void OnButtonClick()
+    private void PlayGame()
     {
-        Debug.Log("Button Clicked");
-        //SceneManager.GetSceneByBuildIndex(buildIndex);
-        SceneManager.LoadScene(buildIndex);
+        LevelSelection.SetActive(true);
     }
 }

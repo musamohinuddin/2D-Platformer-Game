@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
 	public LayerMask groundlayer;
 	float delay = 1;
 	private int PlayerLife = 3;
+	public GameObject GameOver;
+	public GameObject Canvas;
 
 
 
@@ -30,6 +32,8 @@ public class PlayerController : MonoBehaviour
 		Debug.Log("Player controller awake");
 		rb2d = gameObject.GetComponent<Rigidbody2D>();
 		PlayerCollider = gameObject.GetComponent<BoxCollider2D>();
+		//GameOver.SetActive(false);
+		//Canvas.SetActive(true);
 
 	}
 
@@ -81,7 +85,8 @@ public class PlayerController : MonoBehaviour
 	private IEnumerator LoadLevelAfterDelay(float delay)
 	{
 		yield return new WaitForSeconds(delay);
-		SceneManager.LoadScene(3);
+		//SceneManager.LoadScene(3);
+		GameOver.SetActive(true);
 	}
 
 	
@@ -111,7 +116,9 @@ public class PlayerController : MonoBehaviour
 		//checking if player felldown
 		if (position.y < -7.5)
 		{
-			SceneManager.LoadScene(3);
+			//SceneManager.LoadScene(7);
+			Canvas.SetActive(false);
+			GameOver.SetActive(true);
 		}		
 
 	}
