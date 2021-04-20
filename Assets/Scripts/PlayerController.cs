@@ -21,7 +21,9 @@ public class PlayerController : MonoBehaviour
 	float delay = 1;
 	private int PlayerLife = 3;
 	public GameObject GameOver;
-	public GameObject Canvas;
+	public GameObject ScreenData;
+
+	
 
 
 
@@ -32,8 +34,7 @@ public class PlayerController : MonoBehaviour
 		Debug.Log("Player controller awake");
 		rb2d = gameObject.GetComponent<Rigidbody2D>();
 		PlayerCollider = gameObject.GetComponent<BoxCollider2D>();
-		//GameOver.SetActive(false);
-		//Canvas.SetActive(true);
+		
 
 	}
 
@@ -41,10 +42,13 @@ public class PlayerController : MonoBehaviour
 	void Start()
 	{
 		
-        
+        SoundManager.Instance.Play(Sounds.LevelStart);
 		
         
 	}
+
+
+	
 
 	public void PickUpKey()
 	{
@@ -61,22 +65,27 @@ public class PlayerController : MonoBehaviour
 		{			
 
 			GameObject h1 = GameObject.Find("EllenHeart1");
-			h1.GetComponent<Image>().enabled = false;			
+			h1.GetComponent<Image>().enabled = false;	
+			SoundManager.Instance.Play(Sounds.PlayerDeath);		
 		}
 		else if (PlayerLife == 1)
 		{
 			GameObject h2 = GameObject.Find("EllenHeart2");
 			h2.GetComponent<Image>().enabled = false;
+			SoundManager.Instance.Play(Sounds.PlayerDeath);
 		} 
 		else if (PlayerLife == 0)
         {
 			GameObject h3 = GameObject.Find("EllenHeart3");
 			h3.GetComponent<Image>().enabled = false;
+			SoundManager.Instance.Play(Sounds.PlayerDeath);
 		} 
 		else if (PlayerLife < 0)
         {
+			SoundManager.Instance.Play(Sounds.PlayerDeath);	
 			animator.SetBool("Death", true);
-			StartCoroutine(LoadLevelAfterDelay(delay));			
+			StartCoroutine(LoadLevelAfterDelay(delay));		
+			
 		}
 
 	}
@@ -86,6 +95,7 @@ public class PlayerController : MonoBehaviour
 	{
 		yield return new WaitForSeconds(delay);
 		//SceneManager.LoadScene(3);
+		ScreenData.SetActive(false);
 		GameOver.SetActive(true);
 	}
 
@@ -112,13 +122,17 @@ public class PlayerController : MonoBehaviour
 		Vector3 position = transform.position;
 		position.x += horizontal * speed * Time.deltaTime;
 		transform.position = position;
+		
+		
 
 		//checking if player felldown
 		if (position.y < -7.5)
 		{
 			//SceneManager.LoadScene(7);
-			Canvas.SetActive(false);
+			
+			ScreenData.SetActive(false);
 			GameOver.SetActive(true);
+			//SoundManager.Instance.Play(Sounds.PlayerDeath);
 		}		
 
 	}
@@ -136,18 +150,29 @@ public class PlayerController : MonoBehaviour
 	{
 		animator.SetFloat("Speed", Mathf.Abs(horizontal));
 		Vector3 Scale = transform.localScale;
+		
 		if (horizontal < 0)
 		{
 			Scale.x = -1f * Mathf.Abs(Scale.x);
+			
 			
 		}
 		else if (horizontal > 0)
 		{
 			Scale.x = Mathf.Abs(Scale.x);
-
+			
 		}
 		transform.localScale = Scale;
+		
+
 	}
+
+	private void RunMusic() 
+	{
+		SoundManager.Instance.Play(Sounds.PlayerRun);
+	} 
+
+
 
 	private void CrouchAnimation()
 	{
@@ -196,8 +221,11 @@ public class PlayerController : MonoBehaviour
 
 	void Jump()
 	{
-		rb2d.velocity = Vector2.up * jumpForce;		
+		rb2d.velocity = Vector2.up * jumpForce;
+		SoundManager.Instance.Play(Sounds.PlayerJump);	
 	}
+
+	
 	
 
 	/*

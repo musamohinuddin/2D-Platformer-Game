@@ -26,6 +26,7 @@ public class LevelOverController : MonoBehaviour
         if(collision.gameObject.GetComponent<PlayerController>() != null)
         {
             Debug.Log("Level Completed");
+            SoundManager.Instance.Play(Sounds.LevelComplete);
             //SceneManager.LoadScene(buildIndex);
             LevelManager.Instance.MarkCurrentLevelComplete();
         } 

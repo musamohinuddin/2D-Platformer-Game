@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +10,7 @@ public class LevelLoader : MonoBehaviour
 {
     private Button button;
     public string LevelName;
+
 
     private void Awake()
     {
@@ -30,12 +31,15 @@ public class LevelLoader : MonoBehaviour
             {
                 case LevelStatus.Locked:
                     Debug.Log("Can't play this level till you unlock it");
+                    SoundManager.Instance.Play(Sounds.ButtonClick);
                     break;
                 case LevelStatus.Unlocked:
                     SceneManager.LoadScene(LevelName);
+                    SoundManager.Instance.Play(Sounds.ButtonClick);
                     break;
                 case LevelStatus.Completed:
                     SceneManager.LoadScene(LevelName);
+                    SoundManager.Instance.Play(Sounds.ButtonClick);
                     break;
             }
         }
