@@ -6,25 +6,26 @@ using UnityEngine.SceneManagement;
 
 public class GameOverController : MonoBehaviour
 {
-    public Button button;
-    public int buildIndex;
+    public Button buttonRestart;
+    //public int buildIndex;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        button.onClick.AddListener(OnButtonClick);
+        buttonRestart.onClick.AddListener(Restart);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    public void OnButtonClick()
+    private void Restart()
     {
-        Debug.Log("Button Clicked");
+        Debug.Log("Reloading Scene...");
         //SceneManager.GetSceneByBuildIndex(buildIndex);
-        SceneManager.LoadScene(buildIndex);
-    }
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.buildIndex);
+    }      
 }

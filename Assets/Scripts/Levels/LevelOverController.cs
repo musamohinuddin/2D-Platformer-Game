@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class LevelOverController : MonoBehaviour
 {
     
-    public int buildIndex;
+    //public int buildIndex;
 
     // Start is called before the first frame update
     void Start()
@@ -26,7 +26,9 @@ public class LevelOverController : MonoBehaviour
         if(collision.gameObject.GetComponent<PlayerController>() != null)
         {
             Debug.Log("Level Completed");
-            SceneManager.LoadScene(buildIndex);
+            SoundManager.Instance.Play(Sounds.LevelComplete);
+            //SceneManager.LoadScene(buildIndex);
+            LevelManager.Instance.MarkCurrentLevelComplete();
         } 
     
     }
